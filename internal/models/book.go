@@ -1,5 +1,12 @@
 package models
 
+import "context"
+
+// TODO: написать модель интерфейса для book репозитория
+type BookRepository interface {
+	GetByID(ctx context.Context, id string) (Book, error)
+}
+
 type Book struct {
 	Id     int    `json:"id"`
 	Title  string `json:"title"`

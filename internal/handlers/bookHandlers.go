@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"BookApi/models"
+	"BookApi/internal/models"
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -9,17 +9,27 @@ import (
 	"strconv"
 )
 
-// realization of CRUD operation v.1.0
+// TODO: c.Response().Header().Set("Content-Type", "application/json") убрать
+// переделать на c.JSON
+
+// TODO: сделать методы для всех этих хендлеров
 
 // Read
-func GetBook(c echo.Context) error {
+func (bh *BookHandler) GetBook(c echo.Context) error {
 	c.Response().Header().Set("Content-Type", "application/json")
-	bookId := c.Param("id")
-	id, err := strconv.Atoi(bookId)
+
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		models.ShowErrorInLog(err)
 		return c.String(http.StatusBadRequest, "incorrect id num fot get book")
 	}
+
+	book, err := bh.repository.GetByID(c.Request().Context(), id)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "incorrect id num fot get book")
+	}
+
+	return c.JSON(http.StatusOK, book)
+
 	book, ok := models.FindBookById(id)
 	if ok {
 		json.NewEncoder(c.Response()).Encode(book)
@@ -97,4 +107,11 @@ func DeleteBook(c echo.Context) error {
 
 	}
 	return c.String(http.StatusOK, "book delete")
+}
+
+
+func GetAllBooks(c echo.Context) error {
+	c.Response().Header().Set("Content-Type", "application/json")
+	log.Println("get information about all book")
+	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(models.BookData))
 }
