@@ -15,9 +15,9 @@ type Book struct {
 type BookRepository interface {
 	GetByID(ctx context.Context, id int) (*Book, error)
 	FindBookById(ctx context.Context, id int) (*Book, error)
-	DeleteBookById(ctx context.Context, id int) (*Book, error)
-	UpdateBookById(ctx context.Context, id int) (*Book, error)
-	CreateBook(ctx context.Context, book *Book) (*Book, error)
+	DeleteBookById(ctx context.Context, id int) error
+	UpdateBookById(ctx context.Context, id int) error
+	CreateBook(ctx context.Context, book *Book) error
 }
 
 type Author struct {

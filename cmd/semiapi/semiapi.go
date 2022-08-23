@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"github.com/labstack/echo"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -39,6 +40,20 @@ func main() {
 	}
 	app := echo.New()
 	initHandlers(app, db)
+
+	httpServer := &http.Server{
+		Addr:              cnf.Port,
+		Handler:           app,
+		ReadTimeout:       cnf.ReadTimeout,
+		WriteTimeout:      cnf.WriteTimeout,
+	}
+
+	go func() {
+		if err := app.StartServer(httpServer); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("failed start http server")
+		}
+	}()
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
@@ -50,5 +65,3 @@ func main() {
 		log.Fatalf("shutdown http server err: %v", err)
 	}
 }
-
-// gracefull shutdown

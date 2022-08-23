@@ -75,7 +75,6 @@ func (bh *BookHandler) UpdateBook(c echo.Context) error {
 
 // Delete
 func (bh *BookHandler) DeleteBook(c echo.Context) error {
-
 	bookId := c.Param("id")
 	id, err := strconv.Atoi(bookId)
 	if err != nil {

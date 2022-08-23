@@ -8,12 +8,12 @@ import (
 // TODO: написать подключение к БД + структура конфиг
 
 type PostgresConfig struct {
-	Host         string `envconfig:"HOST"`
-	Port         string `envconfig:"PORT"`
-	User         string `envconfig:"USER"`
-	Password     string `envconfig:"PASSWORD"`
-	Sslmode      string `envconfig:"SSLMODE"`
-	DatabaseName string `envconfig:"DATABASENAME"`
+	Host         string `env:"DB_HOST"`
+	Port         string `env:"DB_PORT"`
+	User         string `env:"DB_USER"`
+	Password     string `env:"DB_PASSWORD"`
+	Sslmode      string `env:"DB_SSL_MODE"`
+	DatabaseName string `env:"DATABASE_NAME"`
 }
 
 type Postgres struct {
