@@ -2,16 +2,22 @@ package models
 
 import "context"
 
-// TODO: написать модель интерфейса для book репозитория
-type BookRepository interface {
-	GetByID(ctx context.Context, id string) (Book, error)
-}
-
 type Book struct {
 	Id     int    `json:"id"`
 	Title  string `json:"title"`
-	Author Author `json:"author"`
 	Jenre  string `json:"jenre"`
+	Author Author `json:"author"`
+}
+
+// TODO: написать модель интерфейса для book репозитория
+
+// все еще не понимаю context.Context
+type BookRepository interface {
+	GetByID(ctx context.Context, id int) (*Book, error)
+	FindBookById(ctx context.Context, id int) (*Book, error)
+	DeleteBookById(ctx context.Context, id int) (*Book, error)
+	UpdateBookById(ctx context.Context, id int) (*Book, error)
+	CreateBook(ctx context.Context, book *Book) (*Book, error)
 }
 
 type Author struct {
@@ -21,18 +27,18 @@ type Author struct {
 
 var BookData []Book
 
-func init() {
-	book1 := Book{
-		1,
-		"Boook",
-		Author{
-			"Ivan",
-			"Ivanov",
-		},
-		"DeepDarkFantasy",
-	}
-	BookData = append(BookData, book1)
-}
+// func init() {
+// 	book1 := Book{
+// 		1,
+// 		"Boook",
+// 		Author{
+// 			"Ivan",
+// 			"Ivanov",
+// 		},
+// 		"DeepDarkFantasy",
+// 	}
+// 	BookData = append(BookData, book1)
+// }
 
 func FindBookById(id int) (*Book, bool) {
 	var found bool

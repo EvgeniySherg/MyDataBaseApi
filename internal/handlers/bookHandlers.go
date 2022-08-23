@@ -3,64 +3,51 @@ package handlers
 import (
 	"BookApi/internal/models"
 	"encoding/json"
-	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo"
 )
 
-// TODO: c.Response().Header().Set("Content-Type", "application/json") убрать
-// переделать на c.JSON
-
-// TODO: сделать методы для всех этих хендлеров
-
 // Read
+
+type HttpServer struct {
+	router *echo.Echo
+}
+
+// сделать с остальными
 func (bh *BookHandler) GetBook(c echo.Context) error {
-	c.Response().Header().Set("Content-Type", "application/json")
-
-	id, err := strconv.Atoi(c.Param("id"))
+	ID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.String(http.StatusBadRequest, "incorrect id num for get book")
+	}
+	book, err := bh.repository.GetByID(c.Request().Context(), ID)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "incorrect id num fot get book")
 	}
-
-	book, err := bh.repository.GetByID(c.Request().Context(), id)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "incorrect id num fot get book")
-	}
-
-	return c.JSON(http.StatusOK, book)
-
-	book, ok := models.FindBookById(id)
-	if ok {
-		json.NewEncoder(c.Response()).Encode(book)
-		return c.String(200, "this is your book")
-	} else {
-		return c.String(404, "book not found, try another book id")
-	}
+	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(book))
 }
 
 // Create
-func CreateBook(c echo.Context) error {
-	c.Response().Header().Set("Content-Type", "application/json")
+func (bh *BookHandler) CreateBook(c echo.Context) error {
 	log.Println("user create new book")
 	var book models.Book
 	// take json with newBook Data from request
 	err := json.NewDecoder(c.Request().Body).Decode(&book)
 	if err != nil {
 		log.Println("User enter incorrect data for create")
-		models.ShowErrorInLog(err)
 		return c.String(http.StatusBadRequest, "incorrect book data")
 	}
 	newBookID := len(models.BookData) + 1
 	book.Id = newBookID
-	models.BookData = append(models.BookData, book)
+	bk, err := bh.repository.CreateBook(c.Request().Context(), book)
 	log.Println("new book create")
-	return c.JSON(http.StatusCreated, json.NewEncoder(c.Response()).Encode(book))
+	return c.JSON(http.StatusCreated, json.NewEncoder(c.Response()).Encode(bk))
 }
 
 // Update
-func UpdateBook(c echo.Context) error {
-	c.Response().Header().Set("Content-Type", "application/json")
+func (bh *BookHandler) UpdateBook(c echo.Context) error {
 	var newBook models.Book
 	bookId := c.Param("id")
 	id, err := strconv.Atoi(bookId)
@@ -83,12 +70,12 @@ func UpdateBook(c echo.Context) error {
 	oldBook.Jenre = newBook.Jenre
 	oldBook.Title = newBook.Title
 
-	return c.JSON(200, json.NewEncoder(c.Response()).Encode(oldBook))
+	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(oldBook))
 }
 
 // Delete
-func DeleteBook(c echo.Context) error {
-	c.Response().Header().Set("Content-Type", "application/json")
+func (bh *BookHandler) DeleteBook(c echo.Context) error {
+
 	bookId := c.Param("id")
 	id, err := strconv.Atoi(bookId)
 	if err != nil {
@@ -109,9 +96,7 @@ func DeleteBook(c echo.Context) error {
 	return c.String(http.StatusOK, "book delete")
 }
 
-
-func GetAllBooks(c echo.Context) error {
-	c.Response().Header().Set("Content-Type", "application/json")
+func (bh *BookHandler) GetAllBooks(c echo.Context) error {
 	log.Println("get information about all book")
 	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(models.BookData))
 }
