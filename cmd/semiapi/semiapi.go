@@ -23,10 +23,9 @@ func initHandlers(app *echo.Echo, db *sql.DB) { //что мы ждем от ин
 	bookRep := bookRep.NewRepository(db)
 	bookHan := handlers.NewBookHandler(bookRep)
 	bookShelterGroup.PUT("/update/:id", bookHan.UpdateBook)
-	bookShelterGroup.POST("/create", handlers.CreateBook)
-	bookShelterGroup.DELETE("/delete/:id", handlers.DeleteBook)
-	bookShelterGroup.GET("/book/:id", bookHandler.GetBook)
-	bookShelterGroup.GET("/books", handlers.GetAllBooks)
+	bookShelterGroup.POST("/create", bookHan.CreateBook)
+	bookShelterGroup.DELETE("/delete/:id", bookHan.DeleteBook)
+	bookShelterGroup.GET("/book/:id", bookHan.GetBook)
 }
 
 func main() {
@@ -34,18 +33,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)
 	}
-	db, err := postgres.InitDB(cnf)
+	cnfDb, err := postgres.InitDB(cnf)
 	if err != nil {
 		log.Fatalf("failed db config: %v", err)
 	}
 	app := echo.New()
-	initHandlers(app, db)
+	initHandlers(app, cnfDb.DB)
 
 	httpServer := &http.Server{
-		Addr:              cnf.Port,
-		Handler:           app,
-		ReadTimeout:       cnf.ReadTimeout,
-		WriteTimeout:      cnf.WriteTimeout,
+		Addr:         cnf.Port,
+		Handler:      app,
+		ReadTimeout:  cnf.ReadTimeout,
+		WriteTimeout: cnf.WriteTimeout,
 	}
 
 	go func() {

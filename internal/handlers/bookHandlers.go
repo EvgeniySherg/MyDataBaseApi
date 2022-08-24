@@ -3,11 +3,10 @@ package handlers
 import (
 	"BookApi/internal/models"
 	"encoding/json"
+	"github.com/labstack/echo"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/labstack/echo"
 )
 
 // Read
@@ -39,38 +38,29 @@ func (bh *BookHandler) CreateBook(c echo.Context) error {
 		log.Println("User enter incorrect data for create")
 		return c.String(http.StatusBadRequest, "incorrect book data")
 	}
-	newBookID := len(models.BookData) + 1
-	book.Id = newBookID
-	bk, err := bh.repository.CreateBook(c.Request().Context(), book)
+	err = bh.repository.CreateBook(c.Request().Context(), &book)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusBadRequest, "")
+	}
 	log.Println("new book create")
-	return c.JSON(http.StatusCreated, json.NewEncoder(c.Response()).Encode(bk))
+	return c.JSON(http.StatusCreated, "")
 }
 
 // Update
 func (bh *BookHandler) UpdateBook(c echo.Context) error {
 	var newBook models.Book
-	bookId := c.Param("id")
-	id, err := strconv.Atoi(bookId)
-	if err != nil {
-		models.ShowErrorInLog(err)
-		return c.String(http.StatusBadRequest, "incorrect id")
-	}
-	oldBook, ok := models.FindBookById(id)
-	if !ok {
-		return c.String(http.StatusNotFound, "book with this Id does not exist")
-	}
 	// take json with new information from request and update old bookData
-	err = json.NewDecoder(c.Request().Body).Decode(&newBook) // take json from request
+	err := json.NewDecoder(c.Request().Body).Decode(&newBook) // take json from request
 	if err != nil {
 		log.Println("User enter incorrect json Data for update")
-		models.ShowErrorInLog(err)
 		return c.String(http.StatusBadRequest, "incorrect book data")
 	}
-	oldBook.Author = newBook.Author
-	oldBook.Jenre = newBook.Jenre
-	oldBook.Title = newBook.Title
-
-	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(oldBook))
+	err = bh.repository.UpdateBookById(c.Request().Context(), &newBook)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "")
+	}
+	return c.JSON(http.StatusOK, "")
 }
 
 // Delete
@@ -78,24 +68,12 @@ func (bh *BookHandler) DeleteBook(c echo.Context) error {
 	bookId := c.Param("id")
 	id, err := strconv.Atoi(bookId)
 	if err != nil {
-		models.ShowErrorInLog(err)
 		return c.String(http.StatusBadRequest, "incorrect id num fot delete book")
 	}
-	idx, ok := models.FindBookIdxForDel(id)
-	if !ok {
-		return c.String(http.StatusNotFound, "book with this id not found")
+	err = bh.repository.DeleteBookById(c.Request().Context(), id)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusBadRequest, "")
 	}
-	if idx == 0 {
-		books := &models.BookData
-		*books = models.BookData[1:]
-	} else {
-		models.BookData = models.DeleteFromBookSlice(models.BookData, id)
-
-	}
-	return c.String(http.StatusOK, "book delete")
-}
-
-func (bh *BookHandler) GetAllBooks(c echo.Context) error {
-	log.Println("get information about all book")
-	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(models.BookData))
+	return c.JSON(http.StatusOK, "")
 }

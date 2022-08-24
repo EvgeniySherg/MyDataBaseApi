@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"BookApi/internal/config"
 	"database/sql"
 	"fmt"
 )
@@ -16,20 +17,14 @@ type PostgresConfig struct {
 	DatabaseName string `env:"DATABASE_NAME"`
 }
 
-type Postgres struct {
-	Db     *sql.DB
-	Config *PostgresConfig
-}
-
 // TODO: перенести пакет в internal/postgres
-func InitDB(ps *Postgres) (*Postgres, error) {
+func InitDB(cnf *config.Config) (*config.Config, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		ps.Config.Host, ps.Config.Port, ps.Config.User, ps.Config.Password, ps.Config.DatabaseName, ps.Config.Sslmode)
-
+		cnf.DBPostgres.Host, cnf.DBPostgres.Port, cnf.DBPostgres.User, cnf.DBPostgres.Password, cnf.DBPostgres.DatabaseName, cnf.DBPostgres.Sslmode)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return nil, err
 	}
-	ps.Db = db
-	return ps, nil
+	cnf.DB = db
+	return cnf, nil
 }
