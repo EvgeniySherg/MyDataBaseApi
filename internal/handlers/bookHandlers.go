@@ -9,20 +9,18 @@ import (
 	"strconv"
 )
 
-// Read
-
-type HttpServer struct {
-	router *echo.Echo
-}
+// TODO: везде прокинуть ошибку чтобы видеть ее + логирование
 
 // сделать с остальными
 func (bh *BookHandler) GetBook(c echo.Context) error {
 	ID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		log.Printf("cannot strconv.Atoi: %v", err)
 		return c.String(http.StatusBadRequest, "incorrect id num for get book")
 	}
 	book, err := bh.repository.GetByID(c.Request().Context(), ID)
 	if err != nil {
+		log.Printf("repository.GetByID: %v", err)
 		return c.String(http.StatusBadRequest, "database error, incorrect id")
 	}
 	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(book))
@@ -41,7 +39,7 @@ func (bh *BookHandler) CreateBook(c echo.Context) error {
 	err = bh.repository.CreateBook(c.Request().Context(), &book)
 	if err != nil {
 		log.Println(err)
-		return c.JSON(http.StatusBadRequest, "")
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	log.Println("new book create")
 	return c.JSON(http.StatusCreated, "create")
@@ -58,7 +56,7 @@ func (bh *BookHandler) UpdateBook(c echo.Context) error {
 	}
 	err = bh.repository.UpdateBookById(c.Request().Context(), &newBook)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "error update")
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, "book update")
 }

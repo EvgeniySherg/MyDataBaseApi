@@ -9,11 +9,8 @@ type Book struct {
 	Author string `json:"author" db:"author"`
 }
 
-// TODO: написать модель интерфейса для book репозитория
-
 type BookRepository interface {
-	GetByID(ctx context.Context, id int) (Book, error)
-	FindBookById(ctx context.Context, id int) (*Book, error)
+	GetByID(ctx context.Context, id int) (*Book, error)
 	DeleteBookById(ctx context.Context, id int) error
 	UpdateBookById(ctx context.Context, book *Book) error
 	CreateBook(ctx context.Context, book *Book) error

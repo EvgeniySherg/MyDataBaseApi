@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"BookApi/internal/repository/book"
 	"database/sql"
 	"fmt"
 	"log"
@@ -29,7 +28,5 @@ func InitDB(cnf *PostgresConfig) (*sql.DB, error) {
 		return nil, err
 	}
 	log.Printf("connection to database create successfully")
-	var data book.Database
-	data.DB = db
 	return db, nil
 }

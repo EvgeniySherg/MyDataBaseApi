@@ -19,19 +19,16 @@ import (
 // TODO: сделать init bookHandler
 
 func initHandlers(app *echo.Echo, db *sql.DB) {
-	bookShelterPrefix := "/bookshelter/"
-	bookShelterGroup := app.Group(bookShelterPrefix)
 	bookRep := bookRep.NewRepository(db)
 	bookHan := handlers.NewBookHandler(bookRep)
-	bookShelterGroup.PUT("/update/:id", bookHan.UpdateBook)
+
+	bookShelterPrefix := "/bookshelter"
+	bookShelterGroup := app.Group(bookShelterPrefix)
+
+	bookShelterGroup.PUT("/update", bookHan.UpdateBook)
 	bookShelterGroup.POST("/create", bookHan.CreateBook)
 	bookShelterGroup.DELETE("/delete/:id", bookHan.DeleteBook)
 	bookShelterGroup.GET("/book/:id", bookHan.GetBook)
-	app.PUT("/update/:id", bookHan.UpdateBook)    // не работает
-	app.POST("/", bookHan.CreateBook)             // работет
-	app.DELETE("/delete/:id", bookHan.DeleteBook) // работает
-	app.GET("/book/:id", bookHan.GetBook)         // работает
-
 }
 
 func main() {
@@ -62,6 +59,11 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+
+	if err = db.Close(); err != nil {
+		log.Printf("db close failed: %v", err)
+	}
+
 	shutdownCtx, forceShutdown := context.WithTimeout(context.Background(), 10*time.Second)
 	defer forceShutdown()
 
