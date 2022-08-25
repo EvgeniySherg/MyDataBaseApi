@@ -1,4 +1,4 @@
-package semiapi
+package main
 
 import (
 	"BookApi/internal/config"
@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/labstack/echo"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
@@ -17,7 +18,7 @@ import (
 
 // TODO: сделать init bookHandler
 
-func initHandlers(app *echo.Echo, db *sql.DB) { //что мы ждем от инит хэндлера ? создание префикса, создание группы, перечисление основных хэндлеров
+func initHandlers(app *echo.Echo, db *sql.DB) {
 	bookShelterPrefix := "/bookshelter/"
 	bookShelterGroup := app.Group(bookShelterPrefix)
 	bookRep := bookRep.NewRepository(db)
@@ -26,6 +27,11 @@ func initHandlers(app *echo.Echo, db *sql.DB) { //что мы ждем от ин
 	bookShelterGroup.POST("/create", bookHan.CreateBook)
 	bookShelterGroup.DELETE("/delete/:id", bookHan.DeleteBook)
 	bookShelterGroup.GET("/book/:id", bookHan.GetBook)
+	app.PUT("/update/:id", bookHan.UpdateBook)    // не работает
+	app.POST("/", bookHan.CreateBook)             // работет
+	app.DELETE("/delete/:id", bookHan.DeleteBook) // работает
+	app.GET("/book/:id", bookHan.GetBook)         // работает
+
 }
 
 func main() {
@@ -33,12 +39,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)
 	}
-	cnfDb, err := postgres.InitDB(cnf)
+	db, err := postgres.InitDB(&cnf.DBPostgres)
 	if err != nil {
 		log.Fatalf("failed db config: %v", err)
 	}
 	app := echo.New()
-	initHandlers(app, cnfDb.DB)
+	initHandlers(app, db)
 
 	httpServer := &http.Server{
 		Addr:         cnf.Port,
@@ -56,7 +62,6 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-
 	shutdownCtx, forceShutdown := context.WithTimeout(context.Background(), 10*time.Second)
 	defer forceShutdown()
 

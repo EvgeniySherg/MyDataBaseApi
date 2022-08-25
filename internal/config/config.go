@@ -2,7 +2,6 @@ package config
 
 import (
 	"BookApi/internal/postgres"
-	"database/sql"
 	"time"
 )
 
@@ -11,7 +10,6 @@ type Config struct {
 	ReadTimeout  time.Duration `env:"READ_TIMEOUT"`
 	WriteTimeout time.Duration `env:"WRITE_TIMEOUT"`
 	DBPostgres   postgres.PostgresConfig
-	DB           *sql.DB // подойдет ???
 }
 
 // TODO функция которая спарсит данные env в этот конфиг
@@ -21,9 +19,9 @@ func InitConfig() (*Config, error) {
 		ReadTimeout:  time.Second * 10,
 		WriteTimeout: time.Second * 10,
 		DBPostgres: postgres.PostgresConfig{
-			Host:         "",
+			Host:         "localhost",
 			Port:         "5432",
-			User:         "",
+			User:         "postgres",
 			Password:     "admin",
 			Sslmode:      "disable",
 			DatabaseName: "postgres",

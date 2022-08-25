@@ -23,7 +23,7 @@ func (bh *BookHandler) GetBook(c echo.Context) error {
 	}
 	book, err := bh.repository.GetByID(c.Request().Context(), ID)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "incorrect id num fot get book")
+		return c.String(http.StatusBadRequest, "database error, incorrect id")
 	}
 	return c.JSON(http.StatusOK, json.NewEncoder(c.Response()).Encode(book))
 }
@@ -44,7 +44,7 @@ func (bh *BookHandler) CreateBook(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "")
 	}
 	log.Println("new book create")
-	return c.JSON(http.StatusCreated, "")
+	return c.JSON(http.StatusCreated, "create")
 }
 
 // Update
@@ -58,9 +58,9 @@ func (bh *BookHandler) UpdateBook(c echo.Context) error {
 	}
 	err = bh.repository.UpdateBookById(c.Request().Context(), &newBook)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, "")
+		return c.JSON(http.StatusBadRequest, "error update")
 	}
-	return c.JSON(http.StatusOK, "")
+	return c.JSON(http.StatusOK, "book update")
 }
 
 // Delete
@@ -68,12 +68,12 @@ func (bh *BookHandler) DeleteBook(c echo.Context) error {
 	bookId := c.Param("id")
 	id, err := strconv.Atoi(bookId)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "incorrect id num fot delete book")
+		return c.String(http.StatusBadRequest, "incorrect id num for delete book")
 	}
 	err = bh.repository.DeleteBookById(c.Request().Context(), id)
 	if err != nil {
 		log.Println(err)
-		return c.JSON(http.StatusBadRequest, "")
+		return c.JSON(http.StatusBadRequest, "error delete")
 	}
-	return c.JSON(http.StatusOK, "")
+	return c.JSON(http.StatusOK, "book delete")
 }

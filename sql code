@@ -1,0 +1,8 @@
+CREATE TABLE "book" (
+  "id" int PRIMARY KEY NOT NULL,
+  "title" varchar UNIQUE NOT NULL,
+  "genre" varchar,
+  "author" varchar
+);
+
+

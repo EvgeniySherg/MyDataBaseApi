@@ -1,12 +1,11 @@
 package postgres
 
 import (
-	"BookApi/internal/config"
+	"BookApi/internal/repository/book"
 	"database/sql"
 	"fmt"
+	"log"
 )
-
-// TODO: написать подключение к БД + структура конфиг
 
 type PostgresConfig struct {
 	Host         string `env:"DB_HOST"`
@@ -17,14 +16,20 @@ type PostgresConfig struct {
 	DatabaseName string `env:"DATABASE_NAME"`
 }
 
-// TODO: перенести пакет в internal/postgres
-func InitDB(cnf *config.Config) (*config.Config, error) {
+func InitDB(cnf *PostgresConfig) (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cnf.DBPostgres.Host, cnf.DBPostgres.Port, cnf.DBPostgres.User, cnf.DBPostgres.Password, cnf.DBPostgres.DatabaseName, cnf.DBPostgres.Sslmode)
+		cnf.Host, cnf.Port, cnf.User, cnf.Password, cnf.DatabaseName, cnf.Sslmode)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		return nil, err
 	}
-	cnf.DB = db
-	return cnf, nil
+	err = db.Ping()
+	if err != nil {
+		log.Printf("connection to database not created")
+		return nil, err
+	}
+	log.Printf("connection to database create successfully")
+	var data book.Database
+	data.DB = db
+	return db, nil
 }
