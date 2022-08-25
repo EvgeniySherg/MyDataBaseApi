@@ -8,8 +8,6 @@ import (
 	"log"
 )
 
-// TODO: написать реализацию интерфейса с базой для book
-
 type Database struct {
 	DB *sql.DB
 }

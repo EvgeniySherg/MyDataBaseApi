@@ -19,7 +19,7 @@ import (
 // TODO: сделать init bookHandler
 
 func initHandlers(app *echo.Echo, db *sql.DB) {
-	bookShelterPrefix := "/bookshelter/"
+	bookShelterPrefix := "/bookshelter"
 	bookShelterGroup := app.Group(bookShelterPrefix)
 	bookRep := bookRep.NewRepository(db)
 	bookHan := handlers.NewBookHandler(bookRep)
@@ -27,10 +27,6 @@ func initHandlers(app *echo.Echo, db *sql.DB) {
 	bookShelterGroup.POST("/create", bookHan.CreateBook)
 	bookShelterGroup.DELETE("/delete/:id", bookHan.DeleteBook)
 	bookShelterGroup.GET("/book/:id", bookHan.GetBook)
-	app.PUT("/update/:id", bookHan.UpdateBook)    // не работает
-	app.POST("/", bookHan.CreateBook)             // работет
-	app.DELETE("/delete/:id", bookHan.DeleteBook) // работает
-	app.GET("/book/:id", bookHan.GetBook)         // работает
 
 }
 
