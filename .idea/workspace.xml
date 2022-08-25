@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7631be9f-1432-4936-94a9-b8465efac729" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/semiapi/semiapi.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/semiapi/semiapi.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
