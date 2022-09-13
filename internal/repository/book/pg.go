@@ -9,10 +9,8 @@ import (
 	"log"
 )
 
-// TODO: убрать log.Printf + добавить sql.ErrNoRows
-// TODO: добавить инстанс логгера zap
-
 var ErrBookNotFound = errors.New("book not found")
+var ErrBookNotCreated = errors.New("book not created")
 
 type database struct {
 	DB *sql.DB
@@ -31,22 +29,30 @@ func (p *database) GetByID(ctx context.Context, id int) (*models.Book, error) {
 		}
 		return nil, err
 	}
-
 	return &book, nil
 }
 
 func (p *database) DeleteBookById(ctx context.Context, id int) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE book_id=$1", table)
 
-	_, err := p.DB.ExecContext(ctx, query, id)
+	res, err := p.DB.ExecContext(ctx, query, id)
 	if err != nil {
-		return err
+		return fmt.Errorf("exec err -> %v", err)
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("RowsAffected while delete err -> %v", err)
+	}
+	if rows == 0 {
+		return ErrBookNotFound
 	}
 	return nil
 }
 
 func (p *database) UpdateBookById(ctx context.Context, book *models.Book) error {
 	query := fmt.Sprintf("UPDATE %s SET title=$1, genre=$2, author=$3 WHERE id=$4", table)
+
 	res, err := p.DB.ExecContext(ctx, query, book.Title, book.Genre, book.Author, book.Id)
 	if err != nil {
 		return fmt.Errorf("exec err -> %v", err)
@@ -54,19 +60,25 @@ func (p *database) UpdateBookById(ctx context.Context, book *models.Book) error 
 
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
-		log.Printf("book with id %d not affected")
-		//return errors.New(fmt.Sprintf("book not updated: %v", book.Title))
+
+		return errors.New(fmt.Sprintf("book not updated: %v", book.Title))
 	}
 	return nil
 }
 
 func (p *database) CreateBook(ctx context.Context, b *models.Book) error {
+	var book *models.Book
 	query := fmt.Sprintf("INSERT INTO %s (title, genre, author) VALUES ($1, $2, $3)", table)
-	_, err := p.DB.QueryContext(ctx, query, b.Title, b.Genre, b.Author)
-	if err != nil {
-		return fmt.Errorf("query err: %v", err)
-	}
 
+	err := p.DB.QueryRowContext(ctx, query, b.Title, b.Genre, b.Author).Scan(&book.Id, &book.Title)
+	switch {
+	case err == sql.ErrNoRows:
+		return ErrBookNotCreated
+	case err != nil:
+		return fmt.Errorf("create book err -> %v", err)
+	default:
+		log.Printf("book with id - %v,  created title %s\n", book.Id, book.Title)
+	}
 	return nil
 }
 

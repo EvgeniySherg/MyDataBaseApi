@@ -16,8 +16,6 @@ import (
 	"time"
 )
 
-// TODO: сделать init bookHandler
-
 func initHandlers(app *echo.Echo, db *sql.DB) {
 	bookRep := bookRep.NewRepository(db)
 	bookHan := handlers.NewBookHandler(bookRep)
@@ -36,10 +34,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed init config: %v", err)
 	}
+
 	db, err := postgres.InitDB(&cnf.DBPostgres)
 	if err != nil {
 		log.Fatalf("failed db config: %v", err)
 	}
+
 	app := echo.New()
 	initHandlers(app, db)
 

@@ -5,17 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7631be9f-1432-4936-94a9-b8465efac729" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sql code" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/SemiApi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SemiApi.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/semiapi/semiapi.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/semiapi/semiapi.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/bookHandlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/bookHandlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/book.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/book.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/postgres/postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/postgres/postgres.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/repository/book/pg.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repository/book/pg.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +40,7 @@
     &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/evgeniy/GolandProjects/ServerAndDataBase&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/evgeniy/GolandProjects/awesomeProject2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;go.dep&quot;
   },
   &quot;keyToStringList&quot;: {
